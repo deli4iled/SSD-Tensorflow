@@ -94,6 +94,14 @@ def _process_image(directory, name):
     tmp = sio.loadmat(gt_bb_filename)
     tmp = tmp['gt_boxes_sel'].astype(np.int)
     num_gt_boxes = tmp.shape[0]
+   
+    #to avoid values equal to 0 or empty arrays
+    if len(tmp) == 0:
+      tmp = np.array([[1, 1, 560, 426]])
+
+    idx = np.where(tmp==0)
+    for el0,el1 in zip(idx[0], idx[1]):
+      tmp[el0,el1] = 1
     
     xmin=tmp[:,0]/shape[1]
     ymin=tmp[:,1]/shape[0]
@@ -186,7 +194,7 @@ def run(dataset_dir, output_dir, name='voc_train', shuffling=False):
     #filenames = sorted(os.listdir(path))
     #print(filenames)
     
-    with open(osp.join(dataset_dir, 'trainval_small.txt')) as f:
+    with open(osp.join(dataset_dir, 'trainval.txt')) as f:
         filenames = f.read().splitlines()
         #train_num = len(imlist)*0.7
     
