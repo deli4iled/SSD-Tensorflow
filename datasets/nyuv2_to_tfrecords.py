@@ -96,21 +96,36 @@ def _process_image(directory, name):
     num_gt_boxes = tmp.shape[0]
    
     #to avoid values equal to 0 or empty arrays
-    if len(tmp) == 0:
-      tmp = np.array([[1, 1, 560, 426]])
+    if len(tmp) != 0:
+      
+      idx = np.where(tmp==0)
+      for el0,el1 in zip(idx[0], idx[1]):
+        tmp[el0,el1] = 1
+        
+      #idx = np.where(tmp[:,2]==561)
+      #print(idx)
+      #exit()
+      #for el0,el1 in zip(idx[0], idx[1]):
+      #  tmp[el0,el1] = 560
+        
+      #idx = np.where(tmp[:,3]==427)
+      #for el0,el1 in zip(idx[0], idx[1]):
+      #  print(im_filename)      
+      #  tmp[el0,el1] = 426
+      #print(tmp)
 
-    idx = np.where(tmp==0)
-    for el0,el1 in zip(idx[0], idx[1]):
-      tmp[el0,el1] = 1
+      xmin=tmp[:,0]/shape[1]
+      ymin=tmp[:,1]/shape[0]
+      xmax=tmp[:,2]/shape[1]
+      ymax=tmp[:,3]/shape[0]
+
+      tmp = np.transpose(np.vstack((ymin,xmin,ymax,xmax)))
     
-    xmin=tmp[:,0]/shape[1]
-    ymin=tmp[:,1]/shape[0]
-    xmax=tmp[:,2]/shape[1]
-    ymax=tmp[:,3]/shape[0]
+      bboxes = [tuple(el) for el in tmp]
+    else:
+      bboxes = np.array([])
 
-    tmp = np.transpose(np.vstack((xmin,ymin,xmax,ymax)))
-    bboxes = [tuple(el) for el in tmp]
-    #print(bboxes)
+    print(bboxes)
 
     tmp = sio.loadmat(gt_labels_filename)
     tmp = tmp['gt_class_ids'].astype(np.int)
@@ -141,7 +156,7 @@ def _convert_to_example(image_data, labels, bboxes, shape):
     for b in bboxes:
         assert len(b) == 4
         # pylint: disable=expression-not-assigned
-        [l.append(point) for l, point in zip([xmin, ymin, xmax, ymax], b)]
+        [l.append(point) for l, point in zip([ymin, xmin, ymax, xmax], b)]
         # pylint: enable=expression-not-assigned
 
     image_format = b'JPEG'
@@ -197,7 +212,7 @@ def run(dataset_dir, output_dir, name='voc_train', shuffling=False):
     with open(osp.join(dataset_dir, 'trainval.txt')) as f:
         filenames = f.read().splitlines()
         #train_num = len(imlist)*0.7
-    
+    #filenames = [54]
     if shuffling:
         random.seed(RANDOM_SEED)
         random.shuffle(filenames)
