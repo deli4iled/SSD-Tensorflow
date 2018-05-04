@@ -125,7 +125,7 @@ def _process_image(directory, name):
     else:
       bboxes = np.array([])
 
-    print(bboxes)
+    #print(bboxes)
 
     tmp = sio.loadmat(gt_labels_filename)
     tmp = tmp['gt_class_ids'].astype(np.int)
@@ -209,7 +209,7 @@ def run(dataset_dir, output_dir, name='voc_train', shuffling=False):
     #filenames = sorted(os.listdir(path))
     #print(filenames)
     
-    with open(osp.join(dataset_dir, 'trainval.txt')) as f:
+    with open(osp.join(dataset_dir, 'train.txt')) as f:
         filenames = f.read().splitlines()
         #train_num = len(imlist)*0.7
     #filenames = [54]

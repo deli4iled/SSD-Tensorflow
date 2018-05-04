@@ -31,9 +31,9 @@ slim = tf.contrib.slim
 
 _FILE_PATTERN = 'nyuv2_%s_*.tfrecord'
 
-SPLITS_TO_SIZES = {'train': 636, 'test': 159}
+SPLITS_TO_SIZES = {'train': 537, 'test': 235}
 
-_NUM_CLASSES = 20
+_NUM_CLASSES = 21
 
 _ITEMS_TO_DESCRIPTIONS = {
     'image': 'A color image of varying height and width.',
